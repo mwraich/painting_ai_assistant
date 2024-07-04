@@ -1,10 +1,30 @@
-'use client'
+'use client';
 import { useState } from 'react';
 
 const themes = ['Nature', 'Urban Life', 'Abstract', 'Historical', 'Futuristic'];
 
 export default function Home() {
 	const [selectedTheme, setSelectedTheme] = useState('');
+	const [description, setDescription] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
+
+	const generateDescription = async () => {
+		setIsLoading(true);
+		try {
+			const response = await fetch('/api/generateDescription', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ theme: selectedTheme }),
+			});
+			const data = await response.json();
+			setDescription(data.description);
+		} catch (error) {
+			console.error('Error generating description', error);
+		}
+		setIsLoading(false);
+	};
 	return (
 		<main>
 			<div className="container mx-auto p-4">
@@ -25,10 +45,25 @@ export default function Home() {
 							{theme}
 						</button>
 					))}
-          {selectedTheme && (
-            <p className="mt-4">You Selected: {selectedTheme}</p>
-          )}
 				</div>
+				{selectedTheme && (
+					<div className="mt-4">
+						<p className="mt-4">You Selected: {selectedTheme}</p>
+						<button
+							className="mt-2 bg-green-500 text-white p-2 rounded hover:bg-green-600"
+							onClick={generateDescription}
+							disabled={isLoading}
+						>
+							{isLoading ? 'Generating...' : 'Generate Description'}
+						</button>
+					</div>
+				)}
+				{description && (
+					<div className="mt-4">
+						<h2 className="text-2xl font-bold mb-2">Generated Description:</h2>
+						<p className="p-4 rounded">{description}</p>
+					</div>
+				)}
 			</div>
 		</main>
 	);
