@@ -4,4 +4,4 @@
 2. Generate your assistant ID by running the script `npm run create-assistant`
 3. Then copy that value to the variable in the env 
 4. Make sure you remove your API keys from the createAssistant Script 
-5. Start your server
+5. Restart your server
